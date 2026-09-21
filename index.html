@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REDHOS TRANSFERE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            overflow: hidden;
+            background: #000;
+            color: #fff;
+        }
+
+        #bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+            filter: blur(8px) brightness(0.5);
+            transform: scale(1.1);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.85) 100%);
+            z-index: -1;
+        }
+
+        .screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .screen.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .title {
+            font-size: 4rem;
+            font-weight: 700;
+            letter-spacing: 8px;
+            color: #fff;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            text-shadow: 0 0 30px rgba(255, 0, 0, 0.6), 0 0 60px rgba(255, 0, 0, 0.3);
+            animation: pulse 3s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                text-shadow: 0 0 30px rgba(255, 0, 0, 0.6), 0 0 60px rgba(255, 0, 0, 0.3);
+            }
+            50% {
+                text-shadow: 0 0 50px rgba(255, 0, 0, 1), 0 0 100px rgba(255, 0, 0, 0.5);
+            }
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            letter-spacing: 6px;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            cursor: pointer;
+            padding: 15px 40px;
+            border: 1px solid rgba(255, 0, 0, 0.4);
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            animation: fadeBlink 2s infinite ease-in-out;
+        }
+
+        .subtitle:hover {
+            color: #fff;
+            border-color: rgba(255, 0, 0, 1);
+            background: rgba(255, 0, 0, 0.1);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
+            transform: scale(1.05);
+        }
+
+        @keyframes fadeBlink {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .download-btn {
+            display: inline-block;
+            padding: 20px 60px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: #fff;
+            background: linear-gradient(135deg, #8b0000 0%, #ff0000 100%);
+            border-radius: 4px;
+            border: 1px solid rgba(255, 0, 0, 0.6);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .download-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .download-btn:hover::before {
+            left: 100%;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.7);
+            background: linear-gradient(135deg, #a00000 0%, #ff1a1a 100%);
+        }
+
+        .download-btn:active {
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+                letter-spacing: 4px;
+            }
+            .subtitle {
+                font-size: 1rem;
+                padding: 12px 30px;
+            }
+            .download-btn {
+                padding: 15px 40px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <video autoplay muted loop playsinline id="bg-video">
+        <source src="bg.mp4" type="video/mp4">
+    </video>
+
+    <div class="overlay"></div>
+
+    <div id="entry-screen" class="screen active">
+        <h1 class="title">REDHOS TRANSFERE</h1>
+        <p class="subtitle">Cliquer</p>
+    </div>
+
+    <div id="download-screen" class="screen">
+        <h1 class="title">REDHOS TRANSFERE</h1>
+        <a href="opti.ps1" download class="download-btn">
+            TÉLÉCHARGER
+        </a>
+    </div>
+
+    <script>
+        const entryScreen = document.getElementById('entry-screen');
+        const downloadScreen = document.getElementById('download-screen');
+        const subtitle = document.querySelector('.subtitle');
+
+        subtitle.addEventListener('click', () => {
+            entryScreen.classList.remove('active');
+            setTimeout(() => {
+                downloadScreen.classList.add('active');
+            }, 300);
+        });
+
+        window.addEventListener('load', () => {
+            const video = document.getElementById('bg-video');
+            video.play().catch(e => console.log('Autoplay bloqué:', e));
+        });
+    </script>
+</body>
+</html>
